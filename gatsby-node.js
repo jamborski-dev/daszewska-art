@@ -1,18 +1,23 @@
 const path = require(`path`);
 const { createFilePath, createNodeField } = require(`gatsby-source-filesystem`);
-const fastExif = require("fast-exif");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  const artWork = path.resolve(`./src/templates/photo.js`);
+  const galleryItem = path.resolve(`./src/templates/galleryItem.js`);
+  const albumTemplate = path.resolve(`./src/templates/album.js`);
+
   return graphql(
     `
       {
-        allFile(filter: { extension: { regex: "/(jpg)/" } }) {
+        allFile {
           edges {
             node {
-              name
+              fields {
+                slug
+              }
+              relativeDirectory
+              relativePath
             }
           }
         }
@@ -20,76 +25,102 @@ exports.createPages = ({ graphql, actions }) => {
     `
   ).then(result => {
     if (result.errors) {
-      throw result.errors;
+      throw result.errors
     }
 
-    const works = result.data.allFile.edges;
+    const images = result.data.allFile.edges;
+    const albumImages = images.filter(image => image.node.relativeDirectory !== 'thumbnails')
+    const albums = []
+    
+    // create array of subdirectories
+    albumImages.forEach(image => {
+      if(!albums.includes(image.node.relativeDirectory)){ 
+        albums.push(image.node.relativeDirectory)
+      }
+    })
+
+    // create page for each subdirectory
+    albums.forEach((album, index) => {
+      createPage({
+        path: album,
+        component: albumTemplate,
+        context: {
+          slug: album,
+        }
+      })
+    })
 
     // Create a new page from each image file
-    works.forEach((work, index) => {
+    albumImages.forEach((image, index) => {
       createPage({
-        path: work.node.name,
-        component: artWork,
+        path: image.node.fields.slug,
+        component: galleryItem,
         context: {
-          slug: work.node.name
+          slug: image.node.fields.slug
         }
-      });
-    });
+      })
+    })
 
-    // Create the paginated home view
-    const cardsPerPage = 6;
-    const numPages = Math.ceil(works.length / cardsPerPage);
 
-    Array.from({ length: numPages }).forEach((_, i) => {
-      createPage({
-        path: i === 0 ? `/` : `/${i + 1}`,
-        component: path.resolve("./src/templates/album.js"),
 
-        // pass variables to the album component using page context
-        context: {
-          limit: cardsPerPage,
-          skip: i * cardsPerPage,
-          numPages,
-          currentPage: i + 1
-        }
-      });
-    });
+//     // Create the paginated home view
+//     const cardsPerPage = 6;
+//     const numPages = Math.ceil(works.length / cardsPerPage);
+
+//     Array.from({ length: numPages }).forEach((_, i) => {
+//       createPage({
+//         path: i === 0 ? `/` : `/${i + 1}`,
+//         component: path.resolve("./src/templates/album.js"),
+
+//         // pass variables to the album component using page context
+//         context: {
+//           limit: cardsPerPage,
+//           skip: i * cardsPerPage,
+//           numPages,
+//           currentPage: i + 1
+//         }
+//       });
+//     });
   });
 };
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions;
+  const { createNodeField } = actions
 
   // create a slug out of the image's filename
-  if (node.internal.type === `File`) {
-    const value = createFilePath({ node, getNode });
+  if (node.internal.type === `File` || node.internal.type === `Directory`) {
+    const relativeFilePath = createFilePath({ 
+      node, 
+      getNode
+    })
+
     createNodeField({
-      name: `slug`,
       node,
-      value
-    });
+      name: `slug`,
+      value: relativeFilePath
+    })
   }
 
-  // create custom node fields containing exif data for each image file
-  if (node.internal.mediaType === "image/jpeg") {
-    fastExif
-      .read(node.absolutePath)
-      .then(exifData => {
-        const description = exifData.image.ImageDescription;
-        const title = exifData.image.DocumentName;
-        const copyright = exifData.image.Copyright;
+//   // create custom node fields containing exif data for each image file
+//   if (node.internal.mediaType === "image/jpeg") {
+//     fastExif
+//       .read(node.absolutePath)
+//       .then(exifData => {
+//         const description = exifData.image.ImageDescription;
+//         const title = exifData.image.DocumentName;
+//         const copyright = exifData.image.Copyright;
 
-        createNodeField({
-          name: `exif`,
-          node,
-          value: { title, description, copyright }
-        });
-      })
-      .then(() => {
-        console.log("node fields created");
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-};
+//         createNodeField({
+//           name: `exif`,
+//           node,
+//           value: { title, description, copyright }
+//         });
+//       })
+//       .then(() => {
+//         console.log("node fields created");
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+//   }
+}

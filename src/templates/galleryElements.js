@@ -2,12 +2,28 @@ import styled from 'styled-components'
 
 export const ImageGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: auto;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    @media screen and (max-width: 1300px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media screen and (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media screen and (max-width: 500px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
 
     & > a > .gatsby-image-wrapper {
-      max-height: 650px;
+      width: auto;
+      max-height: 200px;
+      height: 100%;
+      border-radius: 5px;
+      overflow: hidden;
     }
 
     & > a > * {
@@ -22,14 +38,7 @@ export const ImageGrid = styled.div`
 `
 
 export const ImageContainer = styled.div`
-  height: calc(90vh - 6rem);
+  height: 100%;
   width: auto;
-
-  & > * {
-    height: 100%;
-  }
-
-  & img {
-    object-fit: contain !important;
-  }
+  overflow: hidden;
 `

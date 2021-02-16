@@ -16,8 +16,13 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
-    color: ${pallete.black};
+    color: ${pallete.greyText};
+    background: ${pallete.white};
     height: 100%;
+  }
+
+  a {
+    text-decoration: none;
   }
 
   #___gatsby, #gatsby-focus-wrapper {

@@ -1,39 +1,30 @@
 import React from 'react'
-import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebookMessenger, faInstagram } from '@fortawesome/free-brands-svg-icons'
-import { TopbarContainer, Logo, Subtext, Socials } from './TopbarElements'
-
-const Icon = styled(FontAwesomeIcon)`
-  color: #fff;
-  font-size: 1.4rem;
-
-  &:hover {
-    color: #ce9d10;
-  }
-`
-
-const IconLink = styled.a`
-  padding-left: 1.3rem;
-`
+import { TopbarContainer, Logo, Headline, Socials, Header, IconLink, Icon } from './TopbarElements'
 
 const Topbar = () => {
   return (
     <TopbarContainer>
-      <Logo>
-        Zuzanna Daszewska
-      </Logo>
-      <Subtext>
-        Art Portfolio
-      </Subtext>
-      <Socials>
-        <IconLink href="#">
-          <Icon icon={faFacebookMessenger} />
-        </IconLink>
-        <IconLink href="#">
-          <Icon icon={faInstagram} />
-        </IconLink>
-      </Socials>
+      <Header>
+        <a href="/">
+          <Logo>
+            Zuzanna Daszewska
+          </Logo>
+        </a>
+        <Headline>
+          <span>
+            Art Portfolio
+          </span>
+          <Socials>
+            <IconLink href="#">
+              <Icon icon={faFacebookMessenger} />
+            </IconLink>
+            <IconLink href="#">
+              <Icon icon={faInstagram} />
+            </IconLink>
+          </Socials>
+        </Headline>
+      </Header>
     </TopbarContainer>
   )
 }

@@ -20,7 +20,7 @@ export const ImageGrid = styled.div`
 
     & > a > .gatsby-image-wrapper {
       width: auto;
-      max-height: 200px;
+      max-height: 350px;
       height: 100%;
       border-radius: 5px;
       overflow: hidden;

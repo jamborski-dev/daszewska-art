@@ -27,10 +27,11 @@ export const Footer = styled.footer`
   color: ${palette.greyText};
   opacity: 0.5;
   font-size: .8rem;
-  padding: 2rem 0;
+  padding: 2rem 0 0;
   justify-self: start;
   
   @media screen and (max-width: 700px) {
+    padding: 2rem 0;
     text-align: center;
     justify-self: center;
   }

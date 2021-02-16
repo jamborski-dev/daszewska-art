@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: "/daszewska-art",
   plugins: [
     // {
     //   resolve: `gatsby-source-filesystem`,
